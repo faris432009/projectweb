@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background-color: #f9f9f9;
+}
+
+.contact-section {
+  background: linear-gradient(to bottom right, #2193b0, #6dd5ed);
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.contact-section h1 {
+  font-size: 2rem;
+  color: #004d7a;
+  margin-bottom: 20px;
+}
+
+.contact-section p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  max-width: 700px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.contact-item {
+  font-size: 1rem;
+}
+
+.contact-item a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.contact-item a:hover {
+  color: #ffcc00;
+  transform: scale(1.05);
+}
+
+.emoji {
+  margin-left: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.back-to-home {
+  background-color: #ffcc00;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.back-to-home:hover {
+  background-color: #e6b800;
+}
+
+/* Animation */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease-in-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

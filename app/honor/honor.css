@@ -1,0 +1,200 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Cairo', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f9f9f9;
+  overflow-x: hidden;
+}
+
+.header {
+  background-color: #004d7a;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  max-width: 6rem;
+}
+
+.sign-in {
+  background-color: #ffcc00;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  color: black;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.sign-in:hover {
+  background-color: #e6b800;
+}
+
+.invitations-section,
+.gallery-section {
+  background-color: white;
+  padding: 30px 15px;
+  text-align: right;
+}
+
+.invitations-content {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.invitations-content img {
+  max-width: 600px;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.invitations-text {
+  flex: 1;
+  min-width: 250px;
+}
+
+.invitations-text h3 {
+  margin-bottom: 15px;
+}
+
+.invitations-text li {
+  list-style: none;
+  position: relative;
+  padding-right: 24px;
+  line-height: 1.8;
+}
+
+.invitations-text li::before {
+  content: '✔️';
+  position: absolute;
+  right: 0;
+  color: green;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #004d7a;
+  transition: transform 0.3s;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  max-width: 90%;
+  max-height: 90%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.modal-content.loaded {
+  opacity: 1;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+  background-color: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-button-wrapper {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.back-to-main {
+  background-color: #ffcc00;
+  color: black;
+  padding: 0.8rem 1.6rem;
+  text-decoration: none;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.back-to-main:hover {
+  background-color: #e6b800;
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease-in-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.gallery-title {
+  text-align: center;
+  margin: 50px 0 20px;
+}
+.big-title-wrapper {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.big-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  font-family: 'Cairo', sans-serif;
+}
+
+.gallery-title-text {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-family: 'Cairo', sans-serif;
+  color: #333;
+}

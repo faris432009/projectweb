@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-section">
           <img src="/images/2.png" className="footer-logo" alt="شعار مطبعة الصادق" />
-          <h3>مطبعة الصادق</h3>
+          <h3>وكالة ومطابع الصادق للدعايا والاعلان والطباعه الحديثه        </h3>
           <p>
             نقدم خدمات طباعة متنوعة بجودة عالية تشمل كروت شخصية، دعوات مناسبات، بنرات، وأكثر.
             تواصلوا معنا لاكتشاف تجربة طباعة مميزة!
@@ -16,11 +16,17 @@ const Footer = () => {
         <div className="footer-section">
           <h3>روابط سريعة</h3>
           <ul>
-            <li><Link href="/">الرئيسية</Link></li>
-            <li><Link href="/about">من نحن</Link></li>
+            <li><Link href="">الرئيسية</Link></li>
+            <li><Link href="/who">من نحن</Link></li>
             <li><Link href="/contact">تواصل معنا</Link></li>
             <li><Link href="/cards">كروت شخصية</Link></li>
+            <li><Link href="/honor">دعوات ومناسبات افراح</Link></li>
+            <li><Link href="/menu">المنيوهات</Link></li>
             <li><Link href="/panner">البنرات</Link></li>
+            <li><Link href="/catelogs">كتالوجات</Link></li>
+            <li><Link href="/invitaion">دروع تكريم </Link></li>
+            <li><Link href="/appreciation">شهادات تقدير </Link></li> 
+            <li><Link href="/gift">هدايا دعائيه</Link></li>
           </ul>
         </div>
         <div className="footer-section contact-info">

@@ -47,15 +47,15 @@ const Nav = () => {
         onClick={(e) => e.stopPropagation()}
       >
         <ul>
-          <li><Link href="/about">من نحن</Link></li>
+          <li><Link href="/who">من نحن</Link></li>
           <li><Link href="/oursite">موقعنا</Link></li>
           <li><Link href="/contact">تواصل معنا</Link></li>
           <li><Link href="/cards">كروت شخصيه</Link></li>
-          <li><Link href="/invitation">دعوات مناسبات وأفراح</Link></li>
+          <li><Link href="/honor">دعوات مناسبات وأفراح</Link></li>
           <li><Link href="/menu">المنيوهات</Link></li>
           <li><Link href="/panner">البنرات</Link></li>
-          <li><Link href="/catelog">كتالوج</Link></li>
-          <li><Link href="/honnor">دروع تكريم</Link></li>
+          <li><Link href="/catelogs">كتالوجات </Link></li>
+          <li><Link href="/invitaion">دروع تكريم</Link></li>
           <li><Link href="/appreciation">شهادات تقدير</Link></li>
           <li><Link href="/gift">هدايا دعائية</Link></li>
         </ul>
