@@ -1,31 +1,47 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import './certificates.css'
+'use client';
+import React, { useEffect, useState } from 'react';
+import './certificates.css';
 
-const Page = () => {
-  const [modalImage, setModalImage] = useState(null)
-
-  const openModal = (src) => {
-    setModalImage(src)
-  }
-
-  const closeModal = () => {
-    setModalImage(null)
-  }
+const CertificatesPage = () => {
+  const [modalImage, setModalImage] = useState(null);
+  const [certificates, setCertificates] = useState([]);
 
   useEffect(() => {
-    const faders = document.querySelectorAll('.fade-in')
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add('visible')
-      })
-    }, { threshold: 0.1 })
+    const faders = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      },
+      { threshold: 0.1 }
+    );
+    faders.forEach((fade) => observer.observe(fade));
+    return () => faders.forEach((fade) => observer.unobserve(fade));
+  }, []);
 
-    faders.forEach((fade) => observer.observe(fade))
-    return () => {
-      faders.forEach((fade) => observer.unobserve(fade))
-    }
-  }, [])
+  useEffect(() => {
+    const fetchCertificates = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const filtered = data.filter(item => item.category === 'شهادة تقدير');
+        setCertificates(filtered);
+      } catch (error) {
+        console.error('فشل في تحميل بيانات الشهادات:', error);
+      }
+    };
+
+    fetchCertificates();
+  }, []);
+
+  const openModal = (src) => {
+    setModalImage(src);
+  };
+
+  const closeModal = () => {
+    setModalImage(null);
+  };
 
   return (
     <div>
@@ -56,19 +72,23 @@ const Page = () => {
         </div>
       </div>
 
-      {/* قسم المعرض */}
+      {/* المعرض */}
       <div className="gallery-section fade-in">
         <h3>معرض تصميمات شهادات التقدير</h3>
         <div className="gallery-grid">
-          {['28.jpg', '27.jpg', '30.jpg'].map((img, index) => (
-            <div className="gallery-item" key={index} onClick={() => openModal(`/images/${img}`)}>
-              <img src={`/images/${img}`} alt={`شهادة ${index + 1}`} loading="lazy" />
-            </div>
-          ))}
+          {certificates.length === 0 ? (
+            <p className="no-data">لا توجد شهادات متاحة حالياً.</p>
+          ) : (
+            certificates.map((cert, index) => (
+              <div className="gallery-item" key={cert.id || index} onClick={() => openModal(cert.image)}>
+                <img src={cert.image} alt={cert.name ||` شهادة ${index + 1}`} loading="lazy" />
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* زر العودة للصفحة الرئيسية */}
+      {/* زر العودة */}
       <div style={{ textAlign: 'center', margin: '3rem 0' }}>
         <a href="/" className="back-button">العودة للصفحة الرئيسية</a>
       </div>
@@ -81,7 +101,7 @@ const Page = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default CertificatesPage;

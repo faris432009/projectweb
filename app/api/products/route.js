@@ -7,11 +7,19 @@ import { v4 as uuid } from 'uuid';
 const filePath = path.join(process.cwd(), 'public', 'products.json');
 const imageDir = path.join(process.cwd(), 'public', 'images');
 
-export async function GET() {
+export async function GET(request) {
   try {
     await fs.access(filePath);
     const fileData = await fs.readFile(filePath, 'utf8');
-    const products = JSON.parse(fileData);
+    let products = JSON.parse(fileData);
+
+    // تصفية المنتجات حسب الفئة إذا تم تمرير query parameter
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+    if (category) {
+      products = products.filter((p) => p.category === decodeURIComponent(category));
+    }
+
     return NextResponse.json(products);
   } catch (error) {
     console.error('GET error:', error.message);

@@ -16,7 +16,7 @@ const Footer = () => {
         <div className="footer-section">
           <h3>روابط سريعة</h3>
           <ul>
-            <li><Link href="">الرئيسية</Link></li>
+            <li><Link href="/">الرئيسية</Link></li>
             <li><Link href="/who">من نحن</Link></li>
             <li><Link href="/contact">تواصل معنا</Link></li>
             <li><Link href="/cards">كروت شخصية</Link></li>

@@ -1,10 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './banners.css';
 
 const BannersPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState('');
+  const [products, setProducts] = useState([]);
 
   const openModal = (src) => {
     setModalImage(src);
@@ -17,6 +18,7 @@ const BannersPage = () => {
   };
 
   useEffect(() => {
+    // أنيميشن عند الظهور
     const faders = document.querySelectorAll('.fade-in');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -30,9 +32,25 @@ const BannersPage = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    // جلب البيانات من API
+    const fetchBanners = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const banners = data.filter(item => item.category === "البناء");
+        setProducts(banners);
+      } catch (err) {
+        console.error("خطأ في جلب البنرات:", err);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
   return (
     <div style={{ paddingTop: '50px', paddingBottom: '50px' }}>
-      {/* قسم البنرات */}
+      {/* قسم البنرات */} 
       <div className="banners-section fade-in">
         <div className="banners-content">
           <img src="/images/20.jpg" className="banners-img" alt="تصميم بنرات" loading="lazy" />
@@ -51,23 +69,31 @@ const BannersPage = () => {
         </div>
       </div>
 
-      {/* المعرض */}
+      {/* المعرض */} 
       <div className="gallery-section fade-in">
         <h3>معرض تصميمات البنرات</h3>
         <div className="gallery-grid">
-          <div className="gallery-item" onClick={() => openModal('/images/19.jpg')}>
-            <img src="/images/19.jpg" alt="تصميم بنر 1" loading="lazy" />
-          </div>
-          <div className="gallery-item" onClick={() => openModal('/images/21.jpg')}>
-            <img src="/images/21.jpg" alt="تصميم بنر 2" loading="lazy" />
-          </div>
-          <div className="gallery-item" onClick={() => openModal('/images/22.jpg')}>
-            <img src="/images/22.jpg" alt="تصميم بنر 3" loading="lazy" />
-          </div>
+          {products.length === 0 ? (
+            <p className="no-data">لا توجد تصميمات متاحة حالياً.</p>
+          ) : (
+            products.map((product, index) => (
+              <div
+                key={product.id || index}
+                className="gallery-item"
+                onClick={() => openModal(product.image)}
+              >
+                <img
+                  src={product.image}
+                  alt={product.name ||` بنر ${index + 1}`}
+                  loading="lazy"
+                />
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* زر العودة */}
+      {/* زر العودة */} 
       <div style={{ textAlign: 'center', marginTop: '2rem' }}>
         <a
           href="/"
@@ -88,7 +114,7 @@ const BannersPage = () => {
         </a>
       </div>
 
-      {/* نافذة الصورة */}
+      {/* نافذة الصورة (المودال) */} 
       {modalOpen && (
         <div className="modal" onClick={closeModal} style={{ display: 'flex' }}>
           <span className="close" onClick={closeModal}>×</span>

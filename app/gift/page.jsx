@@ -1,9 +1,10 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './GiftsPage.css';
 
 const GiftsPage = () => {
   const [modalImage, setModalImage] = useState(null);
+  const [gifts, setGifts] = useState([]);
 
   const openModal = (imgSrc) => {
     setModalImage(imgSrc);
@@ -12,6 +13,21 @@ const GiftsPage = () => {
   const closeModal = () => {
     setModalImage(null);
   };
+
+  useEffect(() => {
+    const fetchGifts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const filtered = data.filter(item => item.category === 'هدايا دعائية');
+        setGifts(filtered);
+      } catch (err) {
+        console.error('خطأ أثناء جلب بيانات الهدايا:', err);
+      }
+    };
+
+    fetchGifts();
+  }, []);
 
   return (
     <div className="container">
@@ -46,15 +62,19 @@ const GiftsPage = () => {
         <div className="gallery">
           <h3>معرض تصميمات الهدايا الدعائية</h3>
           <div className="gallery-grid">
-            {['35.jpg', '36.jpg', '34.jpg'].map((img, i) => (
-              <div
-                className="gallery-item"
-                key={i}
-                onClick={() => openModal(`/images/${img}`)}
-              >
-                <img src={`/images/${img}`} alt={`هدية ${i + 1}`} />
-              </div>
-            ))}
+            {gifts.length === 0 ? (
+              <p className="no-data">لا توجد هدايا دعائية حالياً.</p>
+            ) : (
+              gifts.map((gift, i) => (
+                <div
+                  className="gallery-item"
+                  key={gift.id || i}
+                  onClick={() => openModal(gift.image)}
+                >
+                  <img src={gift.image} alt={gift.name ||` هدية ${i + 1}`} />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -66,7 +86,7 @@ const GiftsPage = () => {
 
       {/* Modal */}
       {modalImage && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={closeModal}>
           <span className="modal-close" onClick={closeModal}>×</span>
           <img src={modalImage} alt="مكبر" className="modal-image" />
         </div>

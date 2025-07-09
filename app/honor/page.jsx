@@ -1,9 +1,24 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import './honor.css'
 
 const Page = () => {
+  const [modalSrc, setModalSrc] = useState('')
+  const [products, setProducts] = useState([])
+  const modalRef = useRef(null)
+
+  const openModal = (src) => {
+    setModalSrc(src)
+    document.getElementById("modal").style.display = "flex"
+  }
+
+  const closeModal = () => {
+    setModalSrc('')
+    document.getElementById("modal").style.display = "none"
+  }
+
   useEffect(() => {
+    // أنيميشن عند الظهور
     const faders = document.querySelectorAll('.fade-in')
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -12,26 +27,24 @@ const Page = () => {
     }, { threshold: 0.1 })
 
     faders.forEach((fade) => observer.observe(fade))
+    return () => observer.disconnect()
   }, [])
 
-  const openModal = (src) => {
-    const modal = document.getElementById("modal")
-    const modalImage = document.getElementById("modal-image")
-    modal.style.display = "flex"
-    modalImage.src = src
-    modalImage.classList.remove("loaded")
-    modalImage.onload = () => {
-      modalImage.classList.add("loaded")
+  useEffect(() => {
+    // جلب بيانات الدعوات من API
+    const fetchInvitations = async () => {
+      try {
+        const res = await fetch('/api/products')
+        const data = await res.json()
+        const invitations = data.filter(item => item.category === "دعوات")
+        setProducts(invitations)
+      } catch (err) {
+        console.error("فشل في جلب بيانات الدعوات:", err)
+      }
     }
-  }
 
-  const closeModal = () => {
-    const modal = document.getElementById("modal")
-    const modalImage = document.getElementById("modal-image")
-    modal.style.display = "none"
-    modalImage.src = ""
-    modalImage.classList.remove("loaded")
-  }
+    fetchInvitations()
+  }, [])
 
   return (
     <div>
@@ -43,7 +56,7 @@ const Page = () => {
       {/* قسم دعوات الأفراح */}
       <div className="invitations-section fade-in">
         <div className="invitations-content">
-          <img src="images/11.jpg" className="invitations-img" alt="تصميم دعوات أفراح" loading="lazy" />
+          <img src="/images/11.jpg" className="invitations-img" alt="تصميم دعوات أفراح" loading="lazy" />
           <div className="invitations-text">
             <h3>دعوات أفراح ومناسبات فاخرة</h3>
             <p>في مطبعة الصادق، نقدم تصميمات دعوات أفراح أنيقة ومميزة تجمع بين الفخامة والإبداع لتجعل يومك الخاص لا يُنسى.</p>
@@ -60,30 +73,43 @@ const Page = () => {
         </div>
       </div>
 
-      {/* عنوان المعرض فوق الصور */}
+      {/* عنوان المعرض */}
       <h2 className="gallery-title-text">معرض تصميمات دعوات الأفراح</h2>
 
       {/* قسم المعرض */}
       <div className="gallery-section fade-in">
         <div className="gallery-grid">
-          <div className="gallery-item" onClick={() => openModal('images/12.jpg')}>
-            <img src="images/12.jpg" alt="تصميم دعوة 1" loading="lazy" />
-          </div>
-          <div className="gallery-item" onClick={() => openModal('images/13.jpg')}>
-            <img src="images/13.jpg" alt="تصميم دعوة 2" loading="lazy" />
-          </div>
+          {products.length === 0 ? (
+            <p className="no-data">لا توجد تصميمات حالياً.</p>
+          ) : (
+            products.map((product, index) => (
+              <div
+                key={product.id || index}
+                className="gallery-item"
+                onClick={() => openModal(product.image)}
+              >
+                <img
+                  src={product.image}
+                  alt={product.name ||` دعوة ${index + 1}`}
+                  loading="lazy"
+                />
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       {/* زر العودة */}
       <div className="back-button-wrapper">
-        <a href="http://192.168.1.7:3000/" className="back-to-main">العودة للقائمة الرئيسية</a>
+        <a href="/" className="back-to-main">العودة للقائمة الرئيسية</a>
       </div>
 
       {/* النافذة المنبثقة */}
       <div className="modal" id="modal" onClick={(e) => e.target.id === "modal" && closeModal()}>
         <span className="close" onClick={closeModal}>×</span>
-        <img className="modal-content" id="modal-image" />
+        {modalSrc && (
+          <img className="modal-content loaded" ref={modalRef} src={modalSrc} alt="عرض مكبر" />
+        )}
       </div>
     </div>
   )

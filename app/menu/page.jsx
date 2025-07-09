@@ -1,10 +1,12 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './page.css';
 
 const Page = () => {
   const [modalSrc, setModalSrc] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [products, setProducts] = useState([]);
+  const modalRef = useRef(null);
 
   const openModal = (src) => {
     setModalSrc(src);
@@ -12,11 +14,12 @@ const Page = () => {
   };
 
   const closeModal = () => {
-    setShowModal(false);
     setModalSrc('');
+    setShowModal(false);
   };
 
   useEffect(() => {
+    // أنيميشن عند الظهور
     const faders = document.querySelectorAll('.fade-in');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -28,9 +31,25 @@ const Page = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    // جلب بيانات المنيوهات من API
+    const fetchMenus = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const menus = data.filter(product => product.category === "المتيو");
+        setProducts(menus);
+      } catch (err) {
+        console.error("فشل في جلب البيانات:", err);
+      }
+    };
+
+    fetchMenus();
+  }, []);
+
   return (
     <div>
-      {/* قسم المنيوهات */}
+      {/* قسم المنيوهات */} 
       <div className="menus-section fade-in">
         <div className="menus-content">
           <img src="/images/16.jpg" className="menus-img" alt="تصميم منيوهات" loading="lazy" />
@@ -52,28 +71,32 @@ const Page = () => {
         </div>
       </div>
 
-      {/* المعرض */}
+      {/* معرض المنيوهات */} 
       <div className="gallery-section fade-in">
         <h3>معرض تصميمات المنيوهات</h3>
         <div className="gallery-grid">
-          {['15.jpg', '17.jpg', '18.jpg'].map((img, idx) => (
-            <div key={idx} className="gallery-item" onClick={() => openModal(`/images/${img}`)}>
-              <img src={`/images/${img}`} alt={`تصميم منيو ${idx + 1}`} loading="lazy" />
-            </div>
-          ))}
+          {products.length === 0 ? (
+            <p className="no-data">لا توجد تصميمات متاحة حالياً.</p>
+          ) : (
+            products.map((product, idx) => (
+              <div key={product.id || idx} className="gallery-item" onClick={() => openModal(product.image)}>
+                <img src={product.image} alt={product.name ||` منيو ${idx + 1}`} loading="lazy" />
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* زر العودة للقائمة الرئيسية */}
+      {/* زر العودة */} 
       <div className="back-button-wrapper">
         <a href="/" className="back-button">العودة للقائمة الرئيسية</a>
       </div>
 
-      {/* المودال */}
+      {/* المودال */} 
       {showModal && (
         <div className="modal" onClick={(e) => e.target === e.currentTarget && closeModal()}>
           <span className="close" onClick={closeModal}>×</span>
-          <img className="modal-content loaded" src={modalSrc} alt="عرض موسع" />
+          <img className="modal-content loaded" ref={modalRef} src={modalSrc} alt="عرض موسع" />
         </div>
       )}
     </div>

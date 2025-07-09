@@ -1,12 +1,15 @@
-'use client';
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import './cards.css';
 
 const Page = () => {
-  const [modalSrc, setModalSrc] = useState("");
+  const [modalSrc, setModalSrc] = useState(null);
+  const [products, setProducts] = useState([]);
   const modalRef = useRef(null);
 
   useEffect(() => {
+    // Animate on scroll
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -14,6 +17,20 @@ const Page = () => {
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Fetch images from API
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const filtered = data.filter(product => product.category === "كروت");
+        setProducts(filtered);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   const openModal = (src) => {
@@ -22,7 +39,7 @@ const Page = () => {
   };
 
   const closeModal = () => {
-    setModalSrc("");
+    setModalSrc(null);
     document.getElementById("modal").style.display = "none";
   };
 
@@ -52,11 +69,23 @@ const Page = () => {
       <section className="gallery-section fade-in">
         <h3>معرض تصميمات الكروت</h3>
         <div className="gallery-grid">
-          {["8.jpg", "9.jpg", "10.jpg"].map((img, index) => (
-            <div key={index} className="gallery-item" onClick={() => openModal(`/images/${img}`)}>
-              <img src={`/images/${img}`} alt={`تصميم كرت ${index + 1}`} loading="lazy" />
-            </div>
-          ))}
+          {products.length === 0 ? (
+            <p className="no-data">لا توجد تصميمات متاحة حالياً.</p>
+          ) : (
+            products.map((product, index) => (
+              <div
+                key={product.id || index}
+                className="gallery-item"
+                onClick={() => openModal(product.image)}
+              >
+                <img
+                  src={product.image}
+                  alt={product.name ||` تصميم كرت ${index + 1}`}
+                  loading="lazy"
+                />
+              </div>
+            ))
+          )}
         </div>
       </section>
 
@@ -66,7 +95,14 @@ const Page = () => {
       {/* المودال */}
       <div className="modal" id="modal" onClick={(e) => e.target.id === "modal" && closeModal()}>
         <span className="close" onClick={closeModal}>×</span>
-        <img ref={modalRef} src={modalSrc} className={`modal-content ${modalSrc ? 'loaded' : ''}`} alt="صورة مكبرة" />
+        {modalSrc && (
+          <img
+            ref={modalRef}
+            src={modalSrc}
+            className="modal-content loaded"
+            alt="صورة مكبرة"
+          />
+        )}
       </div>
     </div>
   );

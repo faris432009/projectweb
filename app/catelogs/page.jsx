@@ -4,7 +4,22 @@ import './catalogs.css';
 
 const CatalogsPage = () => {
   const [modalSrc, setModalSrc] = useState(null);
+  const [products, setProducts] = useState([]);
   const modalRef = useRef(null);
+
+  const openModal = (src) => {
+    if (modalRef.current) {
+      modalRef.current.style.display = 'flex';
+      setModalSrc(src);
+    }
+  };
+
+  const closeModal = () => {
+    if (modalRef.current) {
+      modalRef.current.style.display = 'none';
+      setModalSrc(null);
+    }
+  };
 
   useEffect(() => {
     const modalClick = (e) => {
@@ -15,28 +30,27 @@ const CatalogsPage = () => {
 
     const modalElement = modalRef.current;
     modalElement?.addEventListener("click", modalClick);
-
-    return () => {
-      modalElement?.removeEventListener("click", modalClick);
-    };
+    return () => modalElement?.removeEventListener("click", modalClick);
   }, []);
 
-  const openModal = (src) => {
-    if (modalRef.current) {
-      modalRef.current.style.display = "flex";
-      setModalSrc(src);
-    }
-  };
+  useEffect(() => {
+    const fetchCatalogs = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const catalogs = data.filter(item => item.category === "كتلوج");
+        setProducts(catalogs);
+      } catch (error) {
+        console.error("خطأ في جلب بيانات الكتالوجات:", error);
+      }
+    };
 
-  const closeModal = () => {
-    if (modalRef.current) {
-      modalRef.current.style.display = "none";
-      setModalSrc(null);
-    }
-  };
+    fetchCatalogs();
+  }, []);
 
   return (
     <div className="catalogs-section fade-in">
+      {/* وصف القسم */}
       <div className="catalogs-content">
         <img src="/images/24.jpg" alt="تصميم كتالوجات" className="catalogs-img" />
         <div className="catalogs-text">
@@ -58,28 +72,36 @@ const CatalogsPage = () => {
       <div className="gallery-section">
         <h3>معرض تصميمات الكتالوجات</h3>
         <div className="gallery-grid">
-          {["23", "25", "26"].map((img, i) => (
-            <div key={i} className="gallery-item" onClick={() => openModal(`/images/${img}.jpg`)}>
-              <img src={`/images/${img}.jpg`} alt={`تصميم كتالوج ${i + 1}`} />
-            </div>
-          ))}
+          {products.length === 0 ? (
+            <p className="no-data">لا توجد تصميمات متاحة حالياً.</p>
+          ) : (
+            products.map((product, index) => (
+              <div
+                key={product.id || index}
+                className="gallery-item"
+                onClick={() => openModal(product.image)}
+              >
+                <img
+                  src={product.image}
+                  alt={product.name ||` كتالوج ${index + 1}`}
+                  loading="lazy"
+                />
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* الزر في الأسفل */}
+      {/* زر العودة */}
       <div className="back-button-container">
         <a href="/" className="back-to-main">العودة للقائمة الرئيسية</a>
       </div>
 
-      {/* نافذة الصورة */}
+      {/* نافذة المعاينة */}
       <div className="modal" ref={modalRef}>
         <span className="close" onClick={closeModal}>×</span>
         {modalSrc && (
-          <img
-            src={modalSrc}
-            className="modal-content loaded"
-            alt="معاينة"
-          />
+          <img src={modalSrc} className="modal-content loaded" alt="معاينة" />
         )}
       </div>
     </div>
